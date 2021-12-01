@@ -1,10 +1,26 @@
+import dash
+import dash_core_components as dcc
+import dash_html_components as html
+import plotly.express as px
 import pandas as pd
 
-daily_df = pd.read_csv("data/daily_report.csv")
-totals_df = (
-    daily_df[["Confirmed", "Deaths", "Recovered"]].sum().reset_index(name="count")
-)
-totals_df = totals_df.rename(columns={"index": "condition"})
+stylesheets = [
+    "https://cdn.jsdelivr.net/npm/reset-css@5.0.1/reset.min.css",
+    "https://fonts.googleapis.com/css2?family=Open+Sans&display=swap"
+]
 
-counties_df = daily_df[["Country_Region","Confirmed", "Deaths", "Recovered"]]
-counties_df = counties_df.groupby("Country_Region").sum()
+app = dash.Dash(__name__, external_stylesheets=stylesheets)
+
+app.layout = html.Div(
+    style={
+        "minHeight": "100vh",
+        "backgroundColor": "black",
+        "color": "white"},
+    children=[
+        html.Header(
+            style={"textAlign": "center", "paddingTop": "50px", "fontFamily": "Open Sans, sans-serif"},
+            children=[html.H1("Corona Dashboard", style={"fontSize": 40})])],
+)
+
+if __name__ == '__main__':
+    app.run_server(debug=True)
