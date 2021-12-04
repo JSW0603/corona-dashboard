@@ -3,8 +3,9 @@ import dash_core_components as dcc
 import dash_html_components as html
 import plotly.express as px
 import pandas as pd
-from data import countries_df, totals_df
+from data import countries_df, totals_df, dropdown
 from builder import make_table
+from dash.dependencies import Input, Output
 
 
 stylesheets = [
@@ -24,7 +25,7 @@ bubble_map = px.scatter_geo(
     locationmode="country names",
     locations="Country_Region",
     template="plotly_dark",
-    projection="natural earth",
+    projection="equirectangular",
     color_continuous_scale=px.colors.sequential.Oryel,
     hover_data={
         "Confirmed": ':,f',
@@ -89,13 +90,25 @@ app.layout = html.Div(
             },
             children=[
                 html.Div(children=[dcc.Graph(figure=bars_graph)]),
+                html.Div(
+                    children=[
+                        dcc.Dropdown(
+                            id="country",
+                            options=[
+                                {'label': country, "value": country} for country in dropdown
+                            ],
+                        ),
+                        html.H1(id="country-output"),
+                    ]
+                ),
             ],
         ),
     ],
 )
 
-map_figure = px.scatter_geo(countries_df)
-map_figure
+@app.callback(Output("country-output", "children"),[Input("country", "value")])
+def update_hello(value):
+    print(value)
 
 if __name__ == '__main__':
     app.run_server(debug=True)
